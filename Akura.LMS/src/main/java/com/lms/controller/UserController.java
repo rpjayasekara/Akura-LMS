@@ -63,11 +63,12 @@ public class UserController {
     public Object userCreating(@RequestParam long sjsuid,
                                @RequestParam String useremail,
                                @RequestParam String password,
+                               @RequestParam String role,
                                ModelMap model,
                                HttpServletRequest request,
                                HttpServletResponse response) {
         ModelAndView mv = new ModelAndView("users/userDashboard");
-        User uEntity = uService.createUser(sjsuid, useremail, password);
+        User uEntity = uService.createUser(sjsuid, useremail, password, role);
         String usertype = uEntity.getRole();
         System.out.println("Usertrpe " + usertype);
         mv.addObject("userId", uEntity.getId());
@@ -90,9 +91,30 @@ public class UserController {
                                 ModelMap model,
                                 HttpServletRequest request,
                                 HttpServletResponse response) {
-
-        ModelAndView mv = new ModelAndView("users/userDashboard");
-        mv.addObject("userId", userId);
+    	User us = uService.findUser(userId);
+        ModelAndView mv = new ModelAndView();
+        if (us.getRole().equals("ROLE_LIBRARIAN")) {
+            System.out.println("Lib found");
+            mv.setViewName("librarian/dashboard");
+            mv.addObject("users", us);
+            mv.addObject("userId", userId);
+            /*mv.addObject("custom_clock",clockService.getCalendar());*/
+        } else if (us.getRole().equals("ROLE_PATRON")) {
+            System.out.println("patron found");
+            mv.setViewName("users/userDashboard");
+            mv.addObject("users", us);
+            mv.addObject("userId", userId);
+        } else if (us.getRole().equals("ROLE_TEACHER")) {
+            System.out.println("teacher found");
+            mv.setViewName("users/dashbord_teacher");
+            mv.addObject("users", us);
+            mv.addObject("userId", userId);
+        }else if (us.getRole().equals("ROLE_PARENT")) {
+            System.out.println("parent found");
+            mv.setViewName("users/user_parent");
+            mv.addObject("users", us);
+            mv.addObject("userId", userId);
+        }
         return mv;
     }
 
@@ -126,6 +148,35 @@ public class UserController {
             mv.addObject("errorMessage", "No Books");
         mv.addObject("userId", userId);
         mv.addObject("books", books);
+        return mv;
+    }
+    
+    @RequestMapping(value = "/user/{teacherId}/{userId}/studentbooks", method = RequestMethod.GET)
+    public Object showStudentBooks(@PathVariable("userId") Integer userId,
+    						@PathVariable("teacherId") Integer teachrId,
+                            ModelMap model,
+                            HttpServletRequest request,
+                            HttpServletResponse response) {
+        ModelAndView mv = new ModelAndView("books/userBookList");
+        List<Book> books = bService.listBooksOfUser(userId);
+        if (books.size() < 1)
+            mv.addObject("errorMessage", "No Books");
+        mv.addObject("userId", teachrId);
+        mv.addObject("books", books);
+        return mv;
+    }
+    
+    @RequestMapping(value = "/user/{userId}/students", method = RequestMethod.GET)
+    public Object showStudents(@PathVariable("userId") Integer userId,
+                            ModelMap model,
+                            HttpServletRequest request,
+                            HttpServletResponse response) {
+        ModelAndView mv = new ModelAndView("users/studentList");
+        List<User> students = uService.listStudents();
+        if (students.size() < 1)
+            mv.addObject("errorMessage", "No Books");
+        mv.addObject("userId", userId);
+        mv.addObject("students", students);
         return mv;
     }
 

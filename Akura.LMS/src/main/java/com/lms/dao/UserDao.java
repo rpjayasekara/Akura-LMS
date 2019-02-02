@@ -24,6 +24,8 @@ public interface UserDao {
      * @return The list of user.
      */
     List<User> findAll();
+    
+    List<User> findAllStudents();
 
     /**
      * @param id

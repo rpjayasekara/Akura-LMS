@@ -20,7 +20,7 @@ public interface UserService {
      * @param password
      * @return
      */
-    User createUser(long sjsuid, String useremail, String password);
+    User createUser(long sjsuid, String useremail, String password, String role);
 
     /**
      * @return
@@ -32,6 +32,8 @@ public interface UserService {
      * @param id
      * @return
      */
+    public List<User> listStudents();
+    
     public User findUser(Integer id);
 
     /**

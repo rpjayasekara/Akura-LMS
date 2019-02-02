@@ -25,13 +25,21 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
-    public User createUser(long sjsuid, String useremail, String password) {
+    public User createUser(long sjsuid, String useremail, String password, String role) {
         User user = new User();
 
         user.setSjsuid(sjsuid);
         user.setUseremail(useremail);
         user.setPassword(password);
-        String role = (useremail.endsWith("@cse.mrt.ac.lk")) ? "ROLE_LIBRARIAN" : "ROLE_PATRON";
+        if(role.equals("student")) {
+        	 role = "ROLE_PATRON";
+        }else if(role.equals("librarian")) {
+        	 role = "ROLE_LIBRARIAN";
+        }else if(role.equals("teacher")) {
+       	 role = "ROLE_TEACHER";
+       }else if(role.equals("parent")) {
+      	 role = "ROLE_PARENT";
+      }
         user.setRole(role);
 
         // TODO Auto-generated method stub
@@ -95,4 +103,10 @@ public class UserServiceImpl implements UserService {
         User user = userDao.findUserByEmail(usermail);
         return user;
     }
+
+	@Override
+	public List<User> listStudents() {
+		// TODO Auto-generated method stub
+		return userDao.findAllStudents();
+	}
 }

@@ -1,5 +1,6 @@
 package com.lms.controller;
 
+import com.lms.entity.Parent;
 import com.lms.entity.User;
 import com.lms.entity.UserVerfToken;
 import com.lms.registration.RegistrationCompleteEvent;
@@ -66,6 +67,14 @@ public class RegistrationController {
         modelAndView.addObject("userForm", user);
         return modelAndView;
     }
+    
+    @RequestMapping(value = "/parentRegister", method = RequestMethod.GET)
+    public ModelAndView registerParent(HttpServletRequest request) {
+        Parent parent = new Parent();
+        ModelAndView modelAndView = new ModelAndView("addparent");
+        modelAndView.addObject("parentForm", parent);
+        return modelAndView;
+    }
 
     /**
      * @param request
@@ -80,7 +89,7 @@ public class RegistrationController {
             @Valid @ModelAttribute("userForm") User user,
             BindingResult bindingResult,
             final HttpServletResponse response) {
-        System.out.println("************* Received the following from the form: SJSUID: " + user.getSjsuid() + " UserEmail: " + user.getUseremail() + " Password: " + user.getPassword());
+        System.out.println("************* Received the following from the form: SJSUID: " + user.getSjsuid() + " UserEmail: " + user.getUseremail() + " Password: " + user.getPassword()+" role "+user.getRole());
 
         if (bindingResult.hasErrors()) {
         	System.out.println(bindingResult.getAllErrors());
@@ -89,7 +98,7 @@ public class RegistrationController {
         }
 
         try {
-            User added = uService.createUser(user.getSjsuid(), user.getUseremail(), user.getPassword());
+            User added = uService.createUser(user.getSjsuid(), user.getUseremail(), user.getPassword(), user.getRole());
             System.out.println("************* The following user will be added into the database: " + added.toString());
             if (added == null) {
                 String errorMessage = "Error creating user in database";
@@ -148,9 +157,18 @@ public class RegistrationController {
                 /*mv.addObject("custom_clock",clockService.getCalendar());*/
             } else if (us.getRole().equals("ROLE_PATRON")) {
                 System.out.println("patron found");
-                mv.setViewName("user/dashboard");
+                mv.setViewName("users/userDashboard");
                 mv.addObject("users", user);
-            } else {
+            } else if (us.getRole().equals("ROLE_TEACHER")) {
+                System.out.println("teacher found");
+                mv.setViewName("users/dashbord_teacher");
+                mv.addObject("users", user);
+            }else if (us.getRole().equals("ROLE_PARENT")) {
+                System.out.println("parent found");
+                mv.setViewName("users/user_parent");
+                mv.addObject("users", user);
+            }
+            else {
                 return new ModelAndView("redirect:/register");
             }
             return mv;
@@ -242,7 +260,20 @@ public class RegistrationController {
                 mv.addObject("users", user);
                 mv.addObject("userId", loggedInUser.getId());
                 return mv;
-            } else {
+            }else if (loggedInUser.getRole().equalsIgnoreCase("ROLE_PARENT")) {
+
+                mv = new ModelAndView("users/dashbord_parent");
+                mv.addObject("users", user);
+                mv.addObject("userId", loggedInUser.getId());
+                return mv;
+            }else if(loggedInUser.getRole().equalsIgnoreCase("ROLE_TEACHER")) {
+
+                mv = new ModelAndView("users/dashbord_teacher");
+                mv.addObject("users", user);
+                mv.addObject("userId", loggedInUser.getId());
+                return mv;
+            }
+            else {
                 mv = new ModelAndView("librarian/dashboard");
                 mv.addObject("users", user);
             }

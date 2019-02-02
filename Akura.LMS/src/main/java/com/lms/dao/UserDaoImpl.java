@@ -88,4 +88,12 @@ public class UserDaoImpl implements UserDao {
         return null;
     }
 
+	@Override
+	public List<User> findAllStudents() {
+		Query query = em.createQuery("select u from User u where u.role = ?");
+		query.setParameter(1, "ROLE_PATRON");
+		List<User> users = (List<User>)query.getResultList();
+		return users;
+	}
+
 }

@@ -175,46 +175,6 @@
     </div>
 </div>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="pr-wrap">
-                <div class="pass-reset">
-                    <label>Enter the email you signed up with</label>
-                    <input type="email" placeholder="Email"/>
-                    <input type="submit" value="Submit" class="pass-reset-submit btn btn-success btn-sm"/>
-                </div>
-            </div>
-
-            <div class="wrap">
-                <p class="form-title">Sign In</p>
-                <form:form class="login" action="${pageContext.request.contextPath}/dashboard" commandName="loginForm">
-                    <input name="useremail" autofocus placeholder="Email" type="text" path="useremail" size="30"/>
-                    <form:errors cssStyle="font-kerning: auto" path="useremail"/>
-                    <input name="password" placeholder="Password" type="password" path="password"
-                           placeholder="Password"/> <form:errors path="password"/>
-                    <input type="submit" value="Sign In" class="btn btn-default btn-sm"/>
-                    <%--<div class="remember-forgot">--%>
-
-                    <%--<div class="col-xs-6" id="block1">--%>
-                    <%--<div class="checkbox" >--%>
-                    <%--<label>--%>
-                    <%--<input type="checkbox" />--%>
-                    <%--Remember Me--%>
-                    <%--</label>--%>
-                    <%--</div>--%>
-                    <%--</div>--%>
-                    <%--<div class="col-xs-7 forgot-pass-content" id="block2">--%>
-                    <%--<a href="javascription:void(0)" if="fgtpass" class="forgot-pass">Forgot Password</a>--%>
-                    <%--</div>--%>
-                    <%--</div>--%>
-                </form:form>
-                <a href="/parentRegister">Parent register</a>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="modal fade in" id="registerUserModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="true">
     <div class="modal-dialog">
@@ -231,8 +191,8 @@
                 <%--<input type="password" name ="password" id="password"  /><br><br>--%>
                 <%--<a id="registerBtn">Register</a>--%>
                 <%--</form:form>--%>
-                <form:form class="form-style-9" method="post" action="${pageContext.request.contextPath}/register"
-                           commandName="userForm" modelAttribute="user" name="registeruserform" id="registeruserform"
+                <form:form class="form-style-9" method="post" action="${pageContext.request.contextPath}/parentRegister"
+                           commandName="parentForm" modelAttribute="parent" name="registeruserform" id="registeruserform"
                            onsubmit="return validate()">
                     <ul>
                         <li>
@@ -240,15 +200,12 @@
                                    class="field-style field-full align-none"
                                    placeholder="SJSU ID"> <form:errors path="sjsuid" ata-rule-required="true"/>
                         </li>
-                         <li>
-                          		 <select name="role">
-  									<option value="student">Student</option>
-  									<option value="librarian">Librarian</option>
-  									<option value="teacher">Teacher</option>
-  									<option value="parent">Parent</option>
-								</select> 				
+                        <li>
+                            <input type="text" autofocus id="childID" name="childID"
+                                   class="field-style field-full align-none"
+                                   placeholder="Child ID"> <form:errors path="childID" ata-rule-required="true"/>
                         </li>
-                      
+                     
                         <li>
                             <input type="text" name="useremail" class="field-style field-full align-none"
                                    placeholder="Email"/> <form:errors path="useremail" ata-rule-required="true"/>
