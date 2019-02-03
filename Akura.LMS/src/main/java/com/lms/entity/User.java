@@ -40,12 +40,23 @@ public class User {
     private String role;
     @Column(name = "ENABLED")
     private boolean enabled;
+    @Column(name = "CHILD")
+    private long childID;
 
-    /**
+    public long getChildID() {
+		return childID;
+	}
+
+	public void setChildID(long childID) {
+		this.childID = childID;
+	}
+
+	/**
      *
      */
     public User() {
         this.enabled = false;
+        this.childID = 000000;
     }
 
     /**

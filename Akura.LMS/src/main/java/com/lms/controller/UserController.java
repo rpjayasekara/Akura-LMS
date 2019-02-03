@@ -111,7 +111,7 @@ public class UserController {
             mv.addObject("userId", userId);
         }else if (us.getRole().equals("ROLE_PARENT")) {
             System.out.println("parent found");
-            mv.setViewName("users/user_parent");
+            mv.setViewName("users/dashbord_parent");
             mv.addObject("users", us);
             mv.addObject("userId", userId);
         }
@@ -157,11 +157,29 @@ public class UserController {
                             ModelMap model,
                             HttpServletRequest request,
                             HttpServletResponse response) {
-        ModelAndView mv = new ModelAndView("books/userBookList");
+        ModelAndView mv = new ModelAndView("users/studentBookList");
         List<Book> books = bService.listBooksOfUser(userId);
         if (books.size() < 1)
             mv.addObject("errorMessage", "No Books");
         mv.addObject("userId", teachrId);
+        mv.addObject("books", books);
+        return mv;
+    }
+    
+    @RequestMapping(value = "/user/{parentId}/childbooks", method = RequestMethod.GET)
+    public Object showChildBooks(
+    						@PathVariable("parentId") Integer parentId,
+                            ModelMap model,
+                            HttpServletRequest request,
+                            HttpServletResponse response) {
+        ModelAndView mv = new ModelAndView("users/studentBookList");
+        long childSJUId = uService.findUser(parentId).getChildID();
+        User child = uService.findUserBySJUID(childSJUId);
+        int childId = child.getId();
+        List<Book> books = bService.listBooksOfUser(childId);
+        if (books.size() < 1)
+            mv.addObject("errorMessage", "No Books");
+        mv.addObject("userId", parentId);
         mv.addObject("books", books);
         return mv;
     }

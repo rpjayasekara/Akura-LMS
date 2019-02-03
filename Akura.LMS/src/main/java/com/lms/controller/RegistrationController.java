@@ -70,9 +70,9 @@ public class RegistrationController {
     
     @RequestMapping(value = "/parentRegister", method = RequestMethod.GET)
     public ModelAndView registerParent(HttpServletRequest request) {
-        Parent parent = new Parent();
+    	User user = new User();
         ModelAndView modelAndView = new ModelAndView("addparent");
-        modelAndView.addObject("parentForm", parent);
+        modelAndView.addObject("userForm", user);
         return modelAndView;
     }
 
@@ -99,6 +99,62 @@ public class RegistrationController {
 
         try {
             User added = uService.createUser(user.getSjsuid(), user.getUseremail(), user.getPassword(), user.getRole());
+            System.out.println("************* The following user will be added into the database: " + added.toString());
+            if (added == null) {
+                String errorMessage = "Error creating user in database";
+                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+                System.out.println("*********** Calling Error Page " + errorMessage);
+                ModelAndView mv = new ModelAndView("error");
+                mv.addObject("responseCode", HttpStatus.INTERNAL_SERVER_ERROR.value());
+                mv.addObject("errorMessage", errorMessage);
+                return mv;
+            }
+            try {
+                System.out.println("************* User addition was successful, so entered the event creator *************");
+                String url = request.getRequestURL().toString();
+                System.out.println("************* Request URL: " + url + "ContextPath= " + request.getContextPath().toString());
+
+                applicationEventPublisher.publishEvent(new RegistrationCompleteEvent(added, url));
+            } catch (Exception e) {
+                System.out.println(e);
+                ModelAndView mv = new ModelAndView("error");
+                mv.addObject("errorMessage", e);
+                return mv;
+            }
+            ModelAndView mv = new ModelAndView("users/welcome");
+            mv.addObject("message", "User with email: " + added.getUseremail() + " successfully created! \r\nPlease check your inbox and validate your account to use full user services.");
+            return mv;
+        } catch (Exception e) {
+            e.printStackTrace();
+            String errorMessage = "Duplicate user in database";
+            response.setStatus(HttpStatus.CONFLICT.value());
+            System.out.println("*********** Calling Error Page " + errorMessage);
+            ModelAndView mv = new ModelAndView("error");
+            mv.addObject("responseCode", HttpStatus.CONFLICT.value());
+            mv.addObject("errorMessage", errorMessage);
+            return mv;
+        }
+    }
+    
+    @RequestMapping(value = "/parentRegister", method = RequestMethod.POST)
+    public ModelAndView registerNewParentAccount(
+            HttpServletRequest request,
+            @Valid @ModelAttribute("userForm") User user,
+            BindingResult bindingResult,
+            final HttpServletResponse response) {
+        System.out.println("************* Received the following from the form: SJSUID: " + user.getSjsuid() + " UserEmail: " + user.getUseremail() + " Password: " + user.getPassword()+" role "+user.getRole());
+
+        if (bindingResult.hasErrors()) {
+        	System.out.println(bindingResult.getAllErrors());
+            System.out.println("******** Result has errors: ******");
+            return new ModelAndView("users/addUser");
+        }
+
+        try {
+        	long childID = user.getChildID();
+//        	User child = uService.findUser(childID);
+            User added = uService.createUser(user.getSjsuid(), user.getUseremail(), user.getPassword(), "ROLE_PARENT");
+            added.setChildID(childID);
             System.out.println("************* The following user will be added into the database: " + added.toString());
             if (added == null) {
                 String errorMessage = "Error creating user in database";
@@ -289,6 +345,23 @@ public class RegistrationController {
      */
     @RequestMapping(value = "/register/confirmRegistration.html", method = RequestMethod.GET)
     public ModelAndView confirmRegisteredAccount(@RequestParam("token") String token) {
+        System.out.println("*********** Token from URL = " + token);
+        UserVerfToken userVerfToken = uService.getUserToken(token);
+        if (userVerfToken == null) {
+            return new ModelAndView(new RedirectView("redirect:/error"));
+        }
+
+        User user = userVerfToken.getUser();
+        user.setEnabled(true);
+        uService.saveValidatedUser(user);
+        ModelAndView modelAndView = new ModelAndView("users/welcome");
+        modelAndView.addObject("showsignin", "true");
+        modelAndView.addObject("message", "Success! \r\n" + user.getUseremail() + " validation successful. You may now use the full user services ");
+        return modelAndView;
+    }
+    
+    @RequestMapping(value = "/parentRegister/confirmRegistration.html", method = RequestMethod.GET)
+    public ModelAndView confirmRegisteredAccountParent(@RequestParam("token") String token) {
         System.out.println("*********** Token from URL = " + token);
         UserVerfToken userVerfToken = uService.getUserToken(token);
         if (userVerfToken == null) {

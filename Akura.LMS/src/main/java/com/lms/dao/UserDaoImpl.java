@@ -96,4 +96,16 @@ public class UserDaoImpl implements UserDao {
 		return users;
 	}
 
+	@Override
+	public User findUserBySJUID(long id) {
+		Query query = em.createQuery("select id from User u where u.sjsuid = ?");
+        query.setParameter(1, id);
+        List userIds = query.getResultList();
+        if (userIds.size() > 0) {
+            User user = em.find(User.class, userIds.get(0));
+            return user;
+        }
+        return null;
+	}
+
 }

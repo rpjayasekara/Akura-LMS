@@ -192,7 +192,7 @@
                 <%--<a id="registerBtn">Register</a>--%>
                 <%--</form:form>--%>
                 <form:form class="form-style-9" method="post" action="${pageContext.request.contextPath}/parentRegister"
-                           commandName="parentForm" modelAttribute="parent" name="registeruserform" id="registeruserform"
+                           commandName="userForm" modelAttribute="user" name="registeruserform" id="registeruserform"
                            onsubmit="return validate()">
                     <ul>
                         <li>

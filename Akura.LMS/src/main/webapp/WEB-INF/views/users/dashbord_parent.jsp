@@ -171,7 +171,7 @@
             <%--console.log("here");--%>
             <%--console.log("" + data);--%>
             <%--});--%>
-            window.open('${pageContext.request.contextPath}/user/${userId}/books', '_self', false)
+            window.open('${pageContext.request.contextPath}/user/${userId}/childbooks', '_self', false)
         });
 
         $("#viewBooksBtn").click(function () {
@@ -297,8 +297,6 @@
                 <li class="nav-header"><a href="#" data-toggle="collapse" data-target="#userMenu">Settings <i
                         class="glyphicon glyphicon-chevron-down"></i></a>
                     <ul class="nav nav-stacked collapse in" id="userMenu">
-                     
-                        <li><a id="mybooks" href="#"><i class="glyphicon glyphicon-flag"></i>Set child</a></li>
                         <li><a id="mybooks" href="#"><i class="glyphicon glyphicon-flag"></i>Child log</a></li>
                         <li><a href="${userlogout}"><i class="glyphicon glyphicon-off"></i> Logout</a></li>
                     </ul>

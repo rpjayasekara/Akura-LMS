@@ -109,4 +109,10 @@ public class UserServiceImpl implements UserService {
 		// TODO Auto-generated method stub
 		return userDao.findAllStudents();
 	}
+
+	@Override
+	public User findUserBySJUID(long id) {
+		
+		return userDao.findUserBySJUID(id);
+	}
 }

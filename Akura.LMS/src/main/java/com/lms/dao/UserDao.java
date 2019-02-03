@@ -38,6 +38,8 @@ public interface UserDao {
      * @return The user object.
      */
     User findUserByEmail(String usermail);
+    
+    User findUserBySJUID(long id);
 
     /**
      * @param user

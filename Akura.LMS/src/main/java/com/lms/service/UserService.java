@@ -42,6 +42,8 @@ public interface UserService {
      * @return
      */
     public User findUserByEmail(String usermail);
+    
+    public User findUserBySJUID(long id);
 
     /**
      *
