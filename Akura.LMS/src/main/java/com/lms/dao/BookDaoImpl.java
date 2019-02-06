@@ -99,7 +99,14 @@ public class BookDaoImpl implements BookDao {
      */
     @Override
     public Book getBookByISBN(String isbn) {
-        return entityManager.find(Book.class, isbn);
+    	Query query = entityManager.createQuery("select id from Book u where u.isbn = ?");
+        query.setParameter(1, isbn);
+        List userIds = query.getResultList();
+        if (userIds.size() > 0) {
+            Book user = entityManager.find(Book.class, userIds.get(0));
+            return user;
+        }
+        return null;
     }
 
     /**

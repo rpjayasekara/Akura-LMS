@@ -231,7 +231,7 @@ public class UserController {
      * @return
      * @throws ParseException
      */
-    @RequestMapping(value = "/user/{userId}/checkout", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/checkout", method = RequestMethod.GET)
     public Object requestBooks(@PathVariable("userId") Integer userId) throws ParseException {
         StringBuilder emailSummary = new StringBuilder();
         emailSummary.append("Book checkout Summary!" + "\n");
@@ -273,6 +273,73 @@ public class UserController {
         ubcService.clearUserCart(userId, false);
         return mv;
     }
+    
+    @RequestMapping(value = "/user/checkout", method = RequestMethod.POST)
+    public Object requestBookscheckout(HttpServletRequest request,
+            HttpServletResponse response) throws ParseException {
+       long sjuid = Long.parseLong(request.getParameter("id"));
+       String isbn = request.getParameter("isbn");
+       System.out.println(sjuid);
+       System.out.println(isbn);
+       User user = uService.findUserBySJUID(sjuid);
+       int userId = user.getId();
+       
+       Book book = bService.getBookByISBN(isbn);
+       System.out.println(book);
+       int bookId = book.getBookId();
+       Err err = ubcService.addUserBookToCart(new UserBookCart(userId, bookId, 0));
+       String addToCartStatus;
+       if (err.isAnError()) {
+           addToCartStatus = err.getMessage();
+
+       } else {
+           addToCartStatus = "Book added to return cart";
+       }
+       List<Book> books = ubcService.getUserBooks(userId, true);
+       StringBuilder emailSummary = new StringBuilder();
+       emailSummary.append("Book checkout Summary!" + "\n");
+       ModelAndView mv = new ModelAndView("books/request");
+       List<UserBookCart> cart = ubcService.getUserCart(userId, false);
+       System.out.println(cart.size());
+       if (cart.size() == 0) {
+           mv.addObject("status", "Cart is Empty. Nothing to checkout");
+           return mv;
+       }
+       List<Book> currBooks = bService.listBooksOfUser(userId);
+       if (currBooks.size() + cart.size() > 10) {
+           mv.addObject("status", "Maximum 10 books can be issued at a time. Must return a book or remove from cart to issue new.");
+           return mv;
+       }
+
+       int userDayBookCount = ubService.getUserDayBookCount(userId);
+       if (userDayBookCount + cart.size() > 5) {
+           mv.addObject("status", "Maximum 5 books can be issued in a day. Must return a book or remove from cart today or try tomorrow");
+           return mv;
+       }
+
+       boolean isWaitlisted = false;
+       for (UserBookCart u : cart) {
+           String status = bService.requestBook(u.getBook_id(), userId);
+           if (status.contains("wait")) {
+               isWaitlisted = true;
+           }
+           emailSummary.append(status);
+           emailSummary.append("\n");
+       }
+
+       mv.addObject("status", emailSummary);
+       //sends consolidated email of checkout
+       eMail.sendMail(uService.findUser(userId).getUseremail(), "Your LMS Checkout Summary", emailSummary.toString());
+       String returnStatus = "Transaction successful! ";
+       // if (isWaitlisted) returnStatus += "Some books were waitlisted. ";
+       returnStatus += "You will get details in email soon !";
+       User logged = (User)request.getSession().getAttribute("user");
+       mv.addObject("userId", logged.getId());
+       mv.addObject("status", returnStatus);
+       ubcService.clearUserCart(userId, false);
+       return mv;
+    }
+
 
     /**
      * @param userId
@@ -349,7 +416,69 @@ public class UserController {
 //        mv.addObject("status", status);
 //        return mv;
     }
+    @RequestMapping(value = "/user/return", method = RequestMethod.POST)
+    public Object returnBookUser(HttpServletRequest request,
+            HttpServletResponse response) throws ParseException {
+    	
+    	 long sjuid = Long.parseLong(request.getParameter("id"));
+         String isbn = request.getParameter("isbn");
+         System.out.println(sjuid);
+         System.out.println(isbn);
+         User user = uService.findUserBySJUID(sjuid);
+         int userId = user.getId();
+         
+         Book book = bService.getBookByISBN(isbn);
+         System.out.println(book);
+         int bookId = book.getBookId();
+         
+         Err err = ubcService.addUserBookToCart(new UserBookCart(userId, bookId, 1));
+         String addToCartStatus;
+         if (err.isAnError()) {
+             addToCartStatus = err.getMessage();
 
+         } else {
+             addToCartStatus = "Book added to return cart";
+         }
+
+        StringBuilder emailSummary = new StringBuilder();
+        ModelAndView mv = new ModelAndView("books/request");
+        List<UserBookCart> cart = ubcService.getUserCart(userId, true);
+        if (cart.size() == 0) {
+            mv.addObject("status", "Cart is Empty. Nothing to checkout");
+            return mv;
+        }
+
+
+
+        for (UserBookCart u : cart) {
+            emailSummary.append(bService.returnBook(u.getBook_id(), userId));
+            emailSummary.append("\n");
+        }
+        emailSummary.append("The Return date is " + clockService.getCalendar().getTime() + "\n");
+        //sends consolidated email of checkout
+        eMail.sendMail(uService.findUser(userId).getUseremail(), "Your LMS Transaction Summary", emailSummary.toString());
+
+        mv.addObject("status", "Books returned! You will get details in email soon !");
+        ubcService.clearUserCart(userId, true);
+        User logged = (User)request.getSession().getAttribute("user");
+        mv.addObject("userId", logged.getId());
+        return mv;
+
+//        ModelAndView mv = new ModelAndView("books/userBookList");
+//
+//
+//        String status = bService.returnBook(bookId, userId);
+//
+//        if (status.equalsIgnoreCase("invalid book")) {
+//            mv.setViewName("books/request");
+//            mv.addObject("userId", userId);
+//            mv.addObject("status", status);
+//            return mv;
+//        }
+//        mv.addObject("userId", userId);
+//        mv.addObject("status", status);
+//        return mv;
+    }
     /**
      * Landing page for search operation by patron
      * @param modelAndView
@@ -528,6 +657,38 @@ public class UserController {
         mv.addObject("books", books);
         mv.addObject("userId", userId);
         mv.addObject("status", status);
+        return mv;
+    }
+    
+    @RequestMapping(value = "/user/renew", method = RequestMethod.POST)
+    public Object renewUserBook(HttpServletRequest request,
+            HttpServletResponse response) throws ParseException {
+        ModelAndView mv = new ModelAndView("books/userBookList");
+        long sjuid = Long.parseLong(request.getParameter("id"));
+        String isbn = request.getParameter("isbn");
+        System.out.println(sjuid);
+        System.out.println(isbn);
+        User user = uService.findUserBySJUID(sjuid);
+        int userId = user.getId();
+        
+        Book book = bService.getBookByISBN(isbn);
+        System.out.println(book);
+        int bookId = book.getBookId();
+        String status = bService.renewBook(bookId, userId);
+
+        if (status.equalsIgnoreCase("invalid book")) {
+            mv.setViewName("books/request");
+            mv.addObject("userId", userId);
+            mv.addObject("status", status);
+            return mv;
+        }
+
+        List<Book> books = bService.listBooksOfUser(userId);
+        mv.addObject("books", books);
+        mv.addObject("status", status);
+        User logged = (User)request.getSession().getAttribute("user");
+        mv.addObject("userId", logged.getId());
+        
         return mv;
     }
 }

@@ -74,6 +74,19 @@
 
     }
 </script>
+<script type="text/javascript">
+    $(document).ready(function () {
+//            $('.forgot-pass').click(function(event) {
+//                $(".pr-wrap").toggleClass("show-pass-reset");
+//            });
+//            $('.pass-reset-submit').click(function(event) {
+//                $(".pr-wrap").removeClass("show-pass-reset");
+//            });
+        $("#signupbutton").click(function () {
+            $('#registerUserModal').modal('show');
+        });
+    });
+</script>
 
 
 <jsp:include page="../../fragments/header.jsp"/>
@@ -158,6 +171,40 @@
     </table>
 
 </div>
+<div class="modal fade in" id="registerUserModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Book checkout</h4>
+            </div>
+            <div class="modal-body">
+                <%--<form:form  method="post" action="${pageContext.request.contextPath}/registration" modelAttribute="user" name="registrationform" id="registrationform">--%>
+                <%--<input type="text" id="sjsuid" name="sjsuid"  /><br><br>--%>
+                <%--<input type="email" name=useremail"  /><br><br>--%>
+                <%--<input type="password" name ="password" id="password"  /><br><br>--%>
+                <%--<a id="registerBtn">Register</a>--%>
+                <%--</form:form>--%>
+                <form class="form-style-9" method="post" action="${pageContext.request.contextPath}/register">
+                    <ul>
+                        <li>
+                            <input type="text" name="id" placeholder="Student ID"> 
+                        </li>
+                        <li>
+                            <input type="submit" value="Register"/>
+                        </li>
+                    </ul>
+                </form>
+            </div>
+            <%--<div class="modal-footer">--%>
+            <%--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>--%>
+            <%--</div>--%>
+        </div>
+    </div>
+</div>
+
 <%--<div>--%>
 <%--<a href="<c:url value="/logout" />">Logout</a>--%>
 <%--</div>--%>

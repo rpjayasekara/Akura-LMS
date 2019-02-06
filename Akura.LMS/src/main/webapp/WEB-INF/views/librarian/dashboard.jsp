@@ -336,6 +336,49 @@
         jQuery('#datetimepicker').datetimepicker()
     }
 </script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+//            $('.forgot-pass').click(function(event) {
+//                $(".pr-wrap").toggleClass("show-pass-reset");
+//            });
+//            $('.pass-reset-submit').click(function(event) {
+//                $(".pr-wrap").removeClass("show-pass-reset");
+//            });
+        $("#signupbutton").click(function () {
+            $('#registerUserModal').modal('show');
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+//            $('.forgot-pass').click(function(event) {
+//                $(".pr-wrap").toggleClass("show-pass-reset");
+//            });
+//            $('.pass-reset-submit').click(function(event) {
+//                $(".pr-wrap").removeClass("show-pass-reset");
+//            });
+        $("#return").click(function () {
+            $('#returnmodel').modal('show');
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+//            $('.forgot-pass').click(function(event) {
+//                $(".pr-wrap").toggleClass("show-pass-reset");
+//            });
+//            $('.pass-reset-submit').click(function(event) {
+//                $(".pr-wrap").removeClass("show-pass-reset");
+//            });
+        $("#renew").click(function () {
+            $('#renewmodel').modal('show');
+        });
+    });
+</script>
+
 <body>
 <!-- header -->
 
@@ -399,6 +442,9 @@
                         <li><a id="addBtn1" href="#"><i class="glyphicon glyphicon-plus-sign"></i> Add a Book</a></li>
                         <li><a id="logsBtn" href="#"><i class="glyphicon glyphicon-flag"></i> Librarian Logs</a></li>
                         <li><a id="searchBtn1" href="#"><i class="glyphicon glyphicon-search"></i> Search a Book</a>
+                        <li><a id="signupbutton" href="#"><i class="glyphicon glyphicon-search"></i>Check out a Book</a>
+                        <li><a id="return" href="#"><i class="glyphicon glyphicon-search"></i>Return a Book</a>
+                        <li><a id="renew" href="#"><i class="glyphicon glyphicon-search"></i>Renew a Book</a>
                         </li>
                         <%--<li><a href="#"><i class="glyphicon glyphicon-remove"></i> Remove a Book</a></li>--%>
                         <li><a id="viewBooksBtn1" href="#"><i class="glyphicon glyphicon-list"></i> View all books</a>
@@ -733,6 +779,117 @@
 
         </div>
         <!--/col-span-9-->
+    </div>
+</div>
+
+<div class="modal fade in" id="registerUserModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Book checkout</h4>
+            </div>
+            <div class="modal-body">
+                <%--<form:form  method="post" action="${pageContext.request.contextPath}/registration" modelAttribute="user" name="registrationform" id="registrationform">--%>
+                <%--<input type="text" id="sjsuid" name="sjsuid"  /><br><br>--%>
+                <%--<input type="email" name=useremail"  /><br><br>--%>
+                <%--<input type="password" name ="password" id="password"  /><br><br>--%>
+                <%--<a id="registerBtn">Register</a>--%>
+                <%--</form:form>--%>
+                <form class="form-style-9" method="post" action="user/checkout">
+                    <ul>
+                        <li>
+                            <input type="text" name="id" placeholder="Student ID"> 
+                        </li>
+                        <li>
+                            <input type="text" name="isbn" placeholder="ISBN"> 
+                        </li>
+                        <li>
+                            <input type="submit" value="Checkout"/>
+                        </li>
+                    </ul>
+                </form>
+            </div>
+            <%--<div class="modal-footer">--%>
+            <%--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>--%>
+            <%--</div>--%>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade in" id="returnmodel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Book return</h4>
+            </div>
+            <div class="modal-body">
+                <%--<form:form  method="post" action="${pageContext.request.contextPath}/registration" modelAttribute="user" name="registrationform" id="registrationform">--%>
+                <%--<input type="text" id="sjsuid" name="sjsuid"  /><br><br>--%>
+                <%--<input type="email" name=useremail"  /><br><br>--%>
+                <%--<input type="password" name ="password" id="password"  /><br><br>--%>
+                <%--<a id="registerBtn">Register</a>--%>
+                <%--</form:form>--%>
+                <form class="form-style-9" method="post" action="user/return">
+                    <ul>
+                        <li>
+                            <input type="text" name="id" placeholder="Student ID"> 
+                        </li>
+                        <li>
+                            <input type="text" name="isbn" placeholder="ISBN"> 
+                        </li>
+                        <li>
+                            <input type="submit" value="Return"/>
+                        </li>
+                    </ul>
+                </form>
+            </div>
+            <%--<div class="modal-footer">--%>
+            <%--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>--%>
+            <%--</div>--%>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade in" id="renewmodel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Book renew</h4>
+            </div>
+            <div class="modal-body">
+                <%--<form:form  method="post" action="${pageContext.request.contextPath}/registration" modelAttribute="user" name="registrationform" id="registrationform">--%>
+                <%--<input type="text" id="sjsuid" name="sjsuid"  /><br><br>--%>
+                <%--<input type="email" name=useremail"  /><br><br>--%>
+                <%--<input type="password" name ="password" id="password"  /><br><br>--%>
+                <%--<a id="registerBtn">Register</a>--%>
+                <%--</form:form>--%>
+                <form class="form-style-9" method="post" action="user/renew">
+                    <ul>
+                        <li>
+                            <input type="text" name="id" placeholder="Student ID"> 
+                        </li>
+                        <li>
+                            <input type="text" name="isbn" placeholder="ISBN"> 
+                        </li>
+                        <li>
+                            <input type="submit" value="Renew"/>
+                        </li>
+                    </ul>
+                </form>
+            </div>
+            <%--<div class="modal-footer">--%>
+            <%--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>--%>
+            <%--</div>--%>
+        </div>
     </div>
 </div>
 <!-- /Main -->

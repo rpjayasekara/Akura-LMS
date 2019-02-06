@@ -60,12 +60,6 @@
                                 var="renewUrl"/>
                     <!--Dhanya, your add to wish_list will come here  of wishlist-->
 
-                    <button class="btn btn-info"
-                            onclick="location.href='${returnUrl}'">Return
-                    </button>
-                    <button class="btn btn-primary"
-                            onclick="location.href='${renewUrl}'">Renew
-                    </button>
                 </td>
 
             </tr>
